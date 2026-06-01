@@ -146,4 +146,4 @@ http://127.0.0.1:5000
 
 ## Autor
 
-Desarrollado por Gonzalo Ariel Juárez como proyecto de práctica y aprendizaje de desarrollo web con Python y Flask.
+Desarrollado por Gonzalo Juarez y Gabriel Bruni como proyecto de práctica y aprendizaje de desarrollo web con Python y Flask.
