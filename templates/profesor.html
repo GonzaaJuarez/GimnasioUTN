@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ profesor.nombre }}
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ profesor.nombre }}</h1>
+
+<p>
+    <strong>Teléfono:</strong>
+    {{ profesor.telefono }}
+</p>
+
+<p>
+    <strong>Email:</strong>
+    {{ profesor.email }}
+</p>
+
+<p>
+    <strong>Instagram:</strong>
+    {{ profesor.instagram }}
+</p>
+
+<p>
+    <strong>Descripción:</strong>
+</p>
+
+<p>
+    {{ profesor.descripcion }}
+</p>
+
+{% endblock %}

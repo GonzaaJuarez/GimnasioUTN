@@ -23,21 +23,13 @@ def profesores():
         profesores=lista_profesores
     )
 
-@app.route("/profesores/candela-pascual")
-def candela():
-    return render_template("profesores/candela.html")
-@app.route("/profesores/nicolas-virulon")
-def nicolas():
-    return render_template("profesores/nicolas.html")
-@app.route("/profesores/mariana-cagnelutti")
-def mariana():
-    return render_template("profesores/mariana.html")
-@app.route("/profesores/emiliano-burgos")
-def emiliano():
-    return render_template("profesores/emiliano.html")
-@app.route("/profesores/sergio-rosas")
-def sergio():
-    return render_template("profesores/sergio.html")
+@app.route("/profesores/<int:id>")
+def detalle_profesor(id):
+    profesor = Profesor.query.get_or_404(id)
+    return render_template(
+        "profesor.html",
+        profesor=profesor
+    )
 
 @app.route("/precios")
 def precios():

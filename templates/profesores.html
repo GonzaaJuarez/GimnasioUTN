@@ -10,7 +10,7 @@ Profesores
 <div class="list-group">
     {% for profesor in profesores %}
 
-        <a href="#"
+        <a href="/profesores/{{ profesor.id }}"
         class="list-group-item list-group-item-action">
             {{ profesor.nombre }}
         </a>
