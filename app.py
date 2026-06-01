@@ -1,7 +1,12 @@
+import os
+import uuid
 from flask import Flask, render_template, request, redirect
 from models import db, Profesor
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///gimnasio.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -58,14 +63,28 @@ def nuevo_profesor():
         email = request.form["email"]
         instagram = request.form["instagram"]
         descripcion = request.form["descripcion"]
-        foto = request.form["foto"]
+        archivo = request.files["foto"]
+        nombre_archivo = None
+        if archivo and archivo.filename:
+            extension = os.path.splitext(
+                archivo.filename
+            )[1]
+            nombre_archivo = (
+                str(uuid.uuid4()) + extension
+            )
+            archivo.save(
+                os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    nombre_archivo
+                )
+            )
         profesor = Profesor(
             nombre=nombre,
             telefono=telefono,
             email=email,
             instagram=instagram,
             descripcion=descripcion,
-            foto=foto
+            foto=nombre_archivo
         )
         db.session.add(profesor)
         db.session.commit()
@@ -74,6 +93,13 @@ def nuevo_profesor():
 @app.route("/admin/profesores/eliminar/<int:id>")
 def eliminar_profesor(id):
     profesor = Profesor.query.get_or_404(id)
+    if profesor.foto:
+        ruta_foto = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            profesor.foto
+        )
+        if os.path.exists(ruta_foto):
+            os.remove(ruta_foto)
     db.session.delete(profesor)
     db.session.commit()
     return redirect("/admin/profesores")
@@ -86,7 +112,42 @@ def editar_profesor(id):
         profesor.email = request.form["email"]
         profesor.instagram = request.form["instagram"]
         profesor.descripcion = request.form["descripcion"]
-        profesor.foto = request.form["foto"]
+
+        eliminar_foto = request.form.get("eliminar_foto")
+        if eliminar_foto and profesor.foto:
+            ruta_foto = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                profesor.foto
+            )
+            if os.path.exists(ruta_foto):
+                os.remove(ruta_foto)
+            profesor.foto = None
+
+        archivo = request.files["foto"]
+        if archivo and archivo.filename:
+            # borrar foto anterior
+            if profesor.foto:
+                ruta_vieja = os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    profesor.foto
+                )
+                if os.path.exists(ruta_vieja):
+                    os.remove(ruta_vieja)
+            # generar nombre único
+            import uuid
+            extension = os.path.splitext(
+                archivo.filename
+            )[1]
+            nombre_archivo = (
+                str(uuid.uuid4()) + extension
+            )
+            archivo.save(
+                os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    nombre_archivo
+                )
+            )
+            profesor.foto = nombre_archivo
         db.session.commit()
         return redirect("/admin/profesores")
     return render_template(

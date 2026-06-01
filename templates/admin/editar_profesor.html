@@ -8,7 +8,7 @@ Editar Profesor
 
 <h1>Editar Profesor</h1>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 
     <div class="mb-3">
         <label class="form-label">Nombre</label>
@@ -25,6 +25,63 @@ Editar Profesor
                name="telefono"
                class="form-control"
                value="{{ profesor.telefono }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email"
+            name="email"
+            class="form-control"
+            value="{{ profesor.email or '' }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Instagram</label>
+        <input type="text"
+            name="instagram"
+            class="form-control"
+            value="{{ profesor.instagram or '' }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Descripción</label>
+        <textarea name="descripcion"
+                class="form-control"
+                rows="4">{{ profesor.descripcion or '' }}</textarea>
+    </div>
+
+    {% if profesor.foto %}
+    <div class="mb-3">
+
+        <p>Foto actual:</p>
+
+        <img
+            src="{{ url_for('static', filename='uploads/' + profesor.foto) }}"
+            width="150">
+
+    </div>
+    {% endif %}
+
+    {% if profesor.foto %}
+    <div class="form-check mb-3">
+        <input
+            class="form-check-input"
+            type="checkbox"
+            name="eliminar_foto"
+            id="eliminar_foto">
+        <label
+            class="form-check-label"
+            for="eliminar_foto">
+            Eliminar foto actual
+        </label>
+    </div>
+    {% endif %}
+    
+    <div class="mb-3">
+        <label class="form-label">Nueva Foto</label>
+        <input type="file"
+            name="foto"
+            class="form-control">
     </div>
 
     <button type="submit"

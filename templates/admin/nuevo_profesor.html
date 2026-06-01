@@ -8,7 +8,7 @@ Nuevo Profesor
 
 <h1>Nuevo Profesor</h1>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 
     <div class="mb-3">
         <label class="form-label">Nombre</label>
@@ -48,10 +48,9 @@ Nuevo Profesor
 
     <div class="mb-3">
         <label class="form-label">Foto</label>
-        <input type="text"
+        <input type="file"
             name="foto"
-            class="form-control"
-            placeholder="static/img/profesores/foto.jpg">
+            class="form-control">
     </div>
 
     <button type="submit"
