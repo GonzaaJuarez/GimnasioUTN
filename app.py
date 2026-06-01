@@ -63,9 +63,17 @@ def nuevo_profesor():
     if request.method == "POST":
         nombre = request.form["nombre"]
         telefono = request.form["telefono"]
+        email = request.form["email"]
+        instagram = request.form["instagram"]
+        descripcion = request.form["descripcion"]
+        foto = request.form["foto"]
         profesor = Profesor(
             nombre=nombre,
-            telefono=telefono
+            telefono=telefono,
+            email=email,
+            instagram=instagram,
+            descripcion=descripcion,
+            foto=foto
         )
         db.session.add(profesor)
         db.session.commit()
@@ -83,6 +91,10 @@ def editar_profesor(id):
     if request.method == "POST":
         profesor.nombre = request.form["nombre"]
         profesor.telefono = request.form["telefono"]
+        profesor.email = request.form["email"]
+        profesor.instagram = request.form["instagram"]
+        profesor.descripcion = request.form["descripcion"]
+        profesor.foto = request.form["foto"]
         db.session.commit()
         return redirect("/admin/profesores")
     return render_template(
