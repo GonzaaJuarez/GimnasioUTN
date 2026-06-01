@@ -3,26 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
     <!-- Navbar -->
-    <nav>
-        Inicio
-        Horarios
-        Profesores
-        Precios
-        Contacto
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Gimnasio UTN</a>
+
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Inicio</a>
+                <a class="nav-link" href="/horarios">Horarios</a>
+                <a class="nav-link" href="/profesores">Profesores</a>
+                <a class="nav-link" href="/precios">Precios</a>
+                <a class="nav-link" href="/contacto">Contacto</a>
+            </div>
+        </div>
     </nav>
 
     <!-- Contenido -->
-    {% block content %}
-    {% endblock %}
+    <div class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </div>
 
     <!-- Footer -->
     <footer>
         Gimnasio UTN FRSR
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
