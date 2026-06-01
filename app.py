@@ -77,6 +77,20 @@ def eliminar_profesor(id):
     db.session.delete(profesor)
     db.session.commit()
     return redirect("/admin/profesores")
+@app.route("/admin/profesores/editar/<int:id>", methods=["GET", "POST"])
+def editar_profesor(id):
+    profesor = Profesor.query.get_or_404(id)
+    if request.method == "POST":
+        profesor.nombre = request.form["nombre"]
+        profesor.telefono = request.form["telefono"]
+        db.session.commit()
+        return redirect("/admin/profesores")
+    return render_template(
+        "admin/editar_profesor.html",
+        profesor=profesor
+    )
+
+
 
 
 with app.app_context():

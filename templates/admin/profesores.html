@@ -17,10 +17,17 @@ Administrar Profesores
     {% for profesor in profesores %}
         <div class="list-group-item d-flex justify-content-between align-items-center">
             <span>{{ profesor.nombre }}</span>
-            <a href="/admin/profesores/eliminar/{{ profesor.id }}"
-            class="btn btn-danger btn-sm">
-                Eliminar
-            </a>
+            <div>
+                <a href="/admin/profesores/editar/{{ profesor.id }}"
+                class="btn btn-warning btn-sm">
+                    Editar
+                </a>
+
+                <a href="/admin/profesores/eliminar/{{ profesor.id }}"
+                class="btn btn-danger btn-sm">
+                    Eliminar
+                </a>
+            </div>
         </div>
     {% endfor %}
 </div>
