@@ -14,6 +14,22 @@ def horarios():
 def profesores():
     return render_template("profesores.html")
 
+@app.route("/profesores/candela-pascual")
+def candela():
+    return render_template("profesores/candela.html")
+@app.route("/profesores/nicolas-virulon")
+def nicolas():
+    return render_template("profesores/nicolas.html")
+@app.route("/profesores/mariana-cagnelutti")
+def mariana():
+    return render_template("profesores/mariana.html")
+@app.route("/profesores/emiliano-burgos")
+def emiliano():
+    return render_template("profesores/emiliano.html")
+@app.route("/profesores/sergio-rosas")
+def sergio():
+    return render_template("profesores/sergio.html")
+
 @app.route("/precios")
 def precios():
     return render_template("precios.html")
