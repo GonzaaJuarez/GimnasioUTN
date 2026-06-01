@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        Inicio
+        Horarios
+        Profesores
+        Precios
+        Contacto
+    </nav>
+
+    <!-- Contenido -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        Gimnasio UTN FRSR
+    </footer>
+
+</body>
+</html>
