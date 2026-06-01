@@ -1,6 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
+from models import db, Profesor
 
 app = Flask(__name__)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///gimnasio.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
 
 @app.route("/")
 def inicio():
@@ -12,7 +17,11 @@ def horarios():
 
 @app.route("/profesores")
 def profesores():
-    return render_template("profesores.html")
+    lista_profesores = Profesor.query.all()
+    return render_template(
+        "profesores.html",
+        profesores=lista_profesores
+    )
 
 @app.route("/profesores/candela-pascual")
 def candela():
@@ -37,6 +46,41 @@ def precios():
 @app.route("/contacto")
 def contacto():
     return render_template("contacto.html")
+
+
+@app.route("/admin")
+def admin():
+    return render_template("admin/index.html")
+@app.route("/admin/profesores")
+def admin_profesores():
+    profesores = Profesor.query.all()
+    return render_template(
+        "admin/profesores.html",
+        profesores=profesores
+    )
+@app.route("/admin/profesores/nuevo", methods=["GET", "POST"])
+def nuevo_profesor():
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        telefono = request.form["telefono"]
+        profesor = Profesor(
+            nombre=nombre,
+            telefono=telefono
+        )
+        db.session.add(profesor)
+        db.session.commit()
+        return redirect("/admin/profesores")
+    return render_template("admin/nuevo_profesor.html")
+@app.route("/admin/profesores/eliminar/<int:id>")
+def eliminar_profesor(id):
+    profesor = Profesor.query.get_or_404(id)
+    db.session.delete(profesor)
+    db.session.commit()
+    return redirect("/admin/profesores")
+
+
+with app.app_context():
+    db.create_all()
 
 if __name__ == "__main__":
     app.run(debug=True)
