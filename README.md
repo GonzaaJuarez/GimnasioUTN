@@ -18,7 +18,7 @@ Este proyecto tiene como objetivo centralizar la información del gimnasio, perm
 -   Automatizar el cálculo de pagos a profesores y la distribución de ingresos.
     
 
-Actualmente el proyecto se encuentra en una etapa inicial de desarrollo utilizando Python y Flask.
+Actualmente el proyecto se encuentra en desarrollo utilizando Python, Flask y SQLite.
 
 ## Tecnologías utilizadas
 
@@ -27,14 +27,17 @@ Actualmente el proyecto se encuentra en una etapa inicial de desarrollo utilizan
 -   Python 3.13
     
 -   Flask 3.1.3
-    
 
+- Flask-SQLAlchemy
+    
 ### Frontend
 
 -   HTML5
     
 -   CSS3
     
+- Bootstrap 5
+
 -   JavaScript
     
 
@@ -58,17 +61,39 @@ Actualmente el proyecto se encuentra en una etapa inicial de desarrollo utilizan
 GimnasioUTN/
 │
 ├── app.py
+├── models.py
 ├── requirements.txt
 ├── README.md
 ├── .gitignore
 │
-├── database/
+├── instance/
+│   └── gimnasio.db
 │
 ├── static/
 │   ├── css/
-│   └── js/
+│   ├── js/
+│   ├── uploads/
+│   │   └── default.png
 │
 └── templates/
+    │
+    ├── admin.html
+    ├── base.html
+    ├── contacto.html
+    ├── horarios.html
+    ├── index.html
+    ├── precios.html
+    ├── profesor.html
+    ├── profesores.html
+    │
+    └── admin/
+        ├── editar_horario.html
+        ├── editar_profesor.html
+        ├── horarios.html
+        ├── index.html
+        ├── nuevo_horario.html
+        ├── nuevo_profesor.html
+        └── profesores.html
 
 ```
 
@@ -123,26 +148,31 @@ http://127.0.0.1:5000
 
 ## Estado actual
 
--   Configuración inicial del proyecto
-    
--   Integración con GitHub
-    
--   Entorno virtual configurado
-    
--   Aplicación Flask funcional
-    
--   Gestión de profesores
-    
--   Gestión de horarios
-    
--   Gestión de precios
-    
--   Gestión de alumnos
-    
--   Cálculo automático de pagos
-    
--   Panel administrativo
-    
+- Página principal
+- Listado dinámico de profesores
+- Ficha individual de profesor
+- Subida de fotografías
+- Imagen por defecto para profesores sin foto
+- Panel administrativo
+- CRUD completo de profesores
+- CRUD completo de horarios
+- Eliminación automática de horarios al eliminar un profesor
+- Eliminación automática de imágenes al reemplazarlas o borrar profesores
+- Horario semanal dinámico
+- Visualización de horarios compartidos entre varios profesores
+- Persistencia de datos mediante SQLite y SQLAlchemy
+
+### Pendiente
+
+- Validaciones de formularios
+- Gestión de alumnos
+- Gestión de cuotas
+- Gestión de pagos a profesores
+- Estadísticas e informes
+- Migración a PostgreSQL
+- Sistema de autenticación para administradores
+
+---
 
 ## Autor
 
