@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+Gestión de Horarios
+{% endblock %}
+
+{% block content %}
+
+<h1>Gestión de Horarios</h1>
+
+<a href="/admin/horarios/nuevo"
+   class="btn btn-success mb-3">
+    Nuevo Horario
+</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Día</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Profesor</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for horario in horarios %}
+        <tr>
+            <td>{{ horario.dia }}</td>
+            <td>{{ horario.hora_inicio }}</td>
+            <td>{{ horario.hora_fin }}</td>
+            <td>{{ horario.profesor.nombre }}</td>
+            <td>
+                <a href="/admin/horarios/editar/{{ horario.id }}"
+                class="btn btn-warning btn-sm">
+                    Editar
+                </a>
+
+                <a href="/admin/horarios/eliminar/{{ horario.id }}"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('¿Eliminar horario?')">
+                    Eliminar
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

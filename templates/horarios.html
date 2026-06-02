@@ -5,5 +5,45 @@ Horarios
 {% endblock %}
 
 {% block content %}
+
 <h1>Horarios</h1>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Día</th>
+            <th>Horario</th>
+            <th>Profesor</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for horario in horarios %}
+
+        <tr>
+
+            <td>{{ horario.dia }}</td>
+
+            <td>
+                {{ horario.hora_inicio }}
+                -
+                {{ horario.hora_fin }}
+            </td>
+
+            <td>
+                <a href="/profesores/{{ horario.profesor.id }}">
+                    {{ horario.profesor.nombre }}
+                </a>
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
 {% endblock %}

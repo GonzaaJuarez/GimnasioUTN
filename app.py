@@ -1,7 +1,7 @@
 import os
 import uuid
 from flask import Flask, render_template, request, redirect
-from models import db, Profesor
+from models import db, Profesor, Horario
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -18,7 +18,11 @@ def inicio():
 
 @app.route("/horarios")
 def horarios():
-    return render_template("horarios.html")
+    horarios = Horario.query.all()
+    return render_template(
+        "horarios.html",
+        horarios=horarios
+    )
 
 @app.route("/profesores")
 def profesores():
@@ -47,7 +51,7 @@ def contacto():
 
 @app.route("/admin")
 def admin():
-    return render_template("admin/index.html")
+    return render_template("admin.html")
 @app.route("/admin/profesores")
 def admin_profesores():
     profesores = Profesor.query.all()
@@ -154,6 +158,58 @@ def editar_profesor(id):
         "admin/editar_profesor.html",
         profesor=profesor
     )
+
+@app.route("/admin/horarios")
+def admin_horarios():
+    horarios = Horario.query.all()
+    return render_template(
+        "admin/horarios.html",
+        horarios=horarios
+    )
+@app.route("/admin/horarios/nuevo", methods=["GET", "POST"])
+def nuevo_horario():
+    profesores = Profesor.query.all()
+    if request.method == "POST":
+        horario = Horario(
+            dia=request.form["dia"],
+            hora_inicio=request.form["hora_inicio"],
+            hora_fin=request.form["hora_fin"],
+            profesor_id=request.form["profesor_id"]
+        )
+        db.session.add(horario)
+        db.session.commit()
+        return redirect("/admin/horarios")
+    return render_template(
+        "admin/nuevo_horario.html",
+        profesores=profesores
+    )
+@app.route("/admin/horarios/eliminar/<int:id>")
+def eliminar_horario(id):
+    horario = Horario.query.get_or_404(id)
+    db.session.delete(horario)
+    db.session.commit()
+    return redirect("/admin/horarios")
+@app.route(
+    "/admin/horarios/editar/<int:id>",
+    methods=["GET", "POST"]
+)
+def editar_horario(id):
+    horario = Horario.query.get_or_404(id)
+    profesores = Profesor.query.all()
+    if request.method == "POST":
+        horario.dia = request.form["dia"]
+        horario.hora_inicio = request.form["hora_inicio"]
+        horario.hora_fin = request.form["hora_fin"]
+        horario.profesor_id = request.form["profesor_id"]
+        db.session.commit()
+        return redirect("/admin/horarios")
+    return render_template(
+        "admin/editar_horario.html",
+        horario=horario,
+        profesores=profesores
+    )
+
+
 
 
 

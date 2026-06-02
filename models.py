@@ -11,5 +11,26 @@ class Profesor(db.Model):
     descripcion = db.Column(db.Text)
     foto = db.Column(db.String(255))
 
+    horarios = db.relationship(
+        "Horario",
+        backref="profesor",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<Profesor {self.nombre}>"
+    
+class Horario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    dia = db.Column(db.String(20), nullable=False)
+
+    hora_inicio = db.Column(db.String(5), nullable=False)
+    hora_fin = db.Column(db.String(5), nullable=False)
+
+    profesor_id = db.Column(
+        db.Integer,
+        db.ForeignKey("profesor.id"),
+        nullable=False
+    )

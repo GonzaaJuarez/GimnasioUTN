@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+Administración
+{% endblock %}
+
+{% block content %}
+
+<h1>Panel de Administración</h1>
+
+<div class="d-grid gap-2 col-md-4">
+
+    <a href="/admin/profesores"
+       class="btn btn-primary">
+        Gestionar Profesores
+    </a>
+
+    <a href="/admin/horarios"
+       class="btn btn-success">
+        Gestionar Horarios
+    </a>
+
+</div>
+
+{% endblock %}
