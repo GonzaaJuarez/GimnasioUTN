@@ -3,47 +3,59 @@
 {% block title %}
 Horarios
 {% endblock %}
-
 {% block content %}
 
+<style>
+    .horario-table td,
+    .horario-table th {
+        padding: 3px;
+        height: 28px;
+        font-size: 0.85rem;
+    }
+</style>
+
 <h1>Horarios</h1>
-
-<table class="table table-bordered">
-
-    <thead>
-        <tr>
-            <th>Día</th>
-            <th>Horario</th>
-            <th>Profesor</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        {% for horario in horarios %}
-
-        <tr>
-
-            <td>{{ horario.dia }}</td>
-
-            <td>
-                {{ horario.hora_inicio }}
-                -
-                {{ horario.hora_fin }}
-            </td>
-
-            <td>
-                <a href="/profesores/{{ horario.profesor.id }}">
-                    {{ horario.profesor.nombre }}
-                </a>
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
-    </tbody>
-
-</table>
-
+<div class="table-responsive">
+    <table class="table table-bordered text-center align-middle horario-table">
+        <thead class="table-dark">
+            <tr>
+                <th>Hora</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hora in horas %}
+            <tr>
+                <td class="bg-light fw-bold">
+                    {{ hora }}
+                </td>
+                {% for dia in dias %}
+                    {% set celda = celdas.get((dia, hora)) %}
+                    {% if celda %}
+                        {% if celda.mostrar %}
+                            <td
+                                rowspan="{{ celda.rowspan }}"
+                                class="table-secondary fw-bold align-middle">
+                                {% for profesor in celda.profesores %}
+                                    {{ profesor }}
+                                    {% if not loop.last %}
+                                        <hr class="my-1">
+                                    {% endif %}
+                                {% endfor %}
+                                {{ celda.profesor }}
+                            </td>
+                        {% endif %}
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

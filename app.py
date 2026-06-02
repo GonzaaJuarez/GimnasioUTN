@@ -16,12 +16,76 @@ db.init_app(app)
 def inicio():
     return render_template("index.html")
 
+def cantidad_filas(hora_inicio, hora_fin):
+    h1, m1 = map(int, hora_inicio.split(":"))
+    h2, m2 = map(int, hora_fin.split(":"))
+    minutos_inicio = h1 * 60 + m1
+    minutos_fin = h2 * 60 + m2
+    return (minutos_fin - minutos_inicio) // 30
+
 @app.route("/horarios")
 def horarios():
-    horarios = Horario.query.all()
+    horarios_db = Horario.query.all()
+    horas = []
+    hora = 7
+    minuto = 0
+    while hora < 23 or (hora == 23 and minuto == 0):
+        horas.append(f"{hora:02d}:{minuto:02d}")
+        minuto += 30
+        if minuto == 60:
+            minuto = 0
+            hora += 1
+    dias = [
+        "Lunes",
+        "Martes",
+        "Miércoles",
+        "Jueves",
+        "Viernes"
+    ]
+    celdas = {}
+    for horario in horarios_db:
+        clave = (
+            horario.dia,
+            horario.hora_inicio
+        )
+        if clave in celdas:
+            celdas[clave]["profesores"].append(
+                horario.profesor.nombre
+            )
+            continue
+        celdas[clave] = {
+            "mostrar": True,
+            "rowspan": cantidad_filas(
+                horario.hora_inicio,
+                horario.hora_fin
+            ),
+            "profesores": [
+                horario.profesor.nombre
+            ]
+        }
+        hora_actual = horario.hora_inicio
+        while hora_actual < horario.hora_fin:
+            h, m = map(
+                int,
+                hora_actual.split(":")
+            )
+            m += 30
+            if m == 60:
+                h += 1
+                m = 0
+            siguiente = f"{h:02d}:{m:02d}"
+            if siguiente < horario.hora_fin:
+                celdas[
+                    (horario.dia, siguiente)
+                ] = {
+                    "mostrar": False
+                }
+            hora_actual = siguiente
     return render_template(
         "horarios.html",
-        horarios=horarios
+        horas=horas,
+        dias=dias,
+        celdas=celdas
     )
 
 @app.route("/profesores")
