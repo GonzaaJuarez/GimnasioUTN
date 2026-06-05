@@ -160,18 +160,38 @@ def admin_profesores():
         "orden",
         "az"
     )
+    buscar = request.args.get(
+        "buscar",
+        ""
+    )
+    query = Profesor.query
+    if buscar:
+        query = query.filter(
+            Profesor.nombre.ilike(
+                f"%{buscar}%"
+            )
+        )
     if orden == "za":
-        profesores = Profesor.query.order_by(
+        profesores = query.order_by(
             Profesor.nombre.desc()
         ).all()
+    elif orden == "nuevos":
+        profesores = query.order_by(
+            Profesor.fecha_creacion.desc()
+        ).all()
+    elif orden == "viejos":
+        profesores = query.order_by(
+            Profesor.fecha_creacion.asc()
+        ).all()
     else:
-        profesores = Profesor.query.order_by(
+        profesores = query.order_by(
             Profesor.nombre.asc()
         ).all()
     return render_template(
         "admin/profesores.html",
         profesores=profesores,
-        orden=orden
+        orden=orden,
+        buscar=buscar
     )
 @app.route("/admin/profesores/nuevo", methods=["GET", "POST"])
 def nuevo_profesor():
@@ -322,7 +342,20 @@ def admin_horarios():
         "orden",
         "dia"
     )
-    horarios = Horario.query.all()
+    buscar = request.args.get(
+        "buscar",
+        ""
+    )
+    query = Horario.query
+    if buscar:
+        query = query.join(
+            Profesor
+        ).filter(
+            Profesor.nombre.ilike(
+                f"%{buscar}%"
+            )
+        )
+    horarios = query.all()
     orden_dias = {
         "Lunes": 1,
         "Martes": 2,
@@ -349,7 +382,8 @@ def admin_horarios():
     return render_template(
         "admin/horarios.html",
         horarios=horarios,
-        orden=orden
+        orden=orden,
+        buscar=buscar
     )
 @app.route("/admin/horarios/nuevo", methods=["GET", "POST"])
 def nuevo_horario():

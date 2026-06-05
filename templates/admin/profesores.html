@@ -16,31 +16,53 @@ Administrar Profesores
     <label class="form-label">
         Ordenar por:
     </label>
-    <select
-        name="orden"
-        class="form-select w-auto"
-        onchange="this.form.submit()">
-        <option
-            value="az"
-            {% if orden == "az" %}selected{% endif %}>
-            Nombre A-Z
-        </option>
-        <option
-            value="za"
-            {% if orden == "za" %}selected{% endif %}>
-            Nombre Z-A
-        </option>
-        <option
-            value="nuevos"
-            {% if orden == "nuevos" %}selected{% endif %}>
-            Más recientes
-        </option>
-        <option
-            value="viejos"
-            {% if orden == "viejos" %}selected{% endif %}>
-            Más antiguos
-        </option>
-    </select>
+<form method="GET" class="mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <input
+                type="text"
+                name="buscar"
+                class="form-control"
+                placeholder="Buscar profesor..."
+                value="{{ buscar }}">
+        </div>
+        <div class="col-md-3">
+            <select
+                name="orden"
+                class="form-select">
+                <option
+                    value="az"
+                    {% if orden == "az" %}selected{% endif %}>
+                    Nombre A-Z
+                </option>
+                <option
+                    value="za"
+                    {% if orden == "za" %}selected{% endif %}>
+                    Nombre Z-A
+                </option>
+                <option
+                    value="nuevos"
+                    {% if orden == "nuevos" %}selected{% endif %}>
+                    Más recientes
+                </option>
+                <option
+                    value="viejos"
+                    {% if orden == "viejos" %}selected{% endif %}>
+                    Más antiguos
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-auto">
+            <button
+                type="submit"
+                class="btn btn-primary">
+                Buscar
+            </button>
+        </div>
+
+    </div>
+
 </form>
 
 <div class="list-group">
