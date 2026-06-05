@@ -36,12 +36,17 @@ def horario_superpuesto(
             return True
 
     return False
-
 def horario_valido(
     hora_inicio,
     hora_fin
 ):
     return hora_inicio < hora_fin
+def horario_media_hora_valido(hora):
+    h, m = map(
+        int,
+        hora.split(":")
+    )
+    return m in [0, 30]
 
 def nombre_valido(nombre):
     return bool(nombre.strip())

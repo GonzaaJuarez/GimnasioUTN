@@ -13,6 +13,31 @@ Gestión de Horarios
     Nuevo Horario
 </a>
 
+<form method="GET" class="mb-3">
+    <label class="form-label">
+        Ordenar por:
+    </label>
+    <select
+        name="orden"
+        class="form-select w-auto"
+        onchange="this.form.submit()">
+        <option
+            value="dia"
+            {% if orden == "dia" %}
+                selected
+            {% endif %}>
+            Día y hora
+        </option>
+        <option
+            value="profesor"
+            {% if orden == "profesor" %}
+                selected
+            {% endif %}>
+            Profesor
+        </option>
+    </select>
+</form>
+
 <table class="table table-striped">
     <thead>
         <tr>

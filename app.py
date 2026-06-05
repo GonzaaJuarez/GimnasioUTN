@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 from validators import (
     horario_superpuesto,
     horario_valido,
+    horario_media_hora_valido,
     nombre_valido,
     telefono_valido,
     email_valido
@@ -317,10 +318,38 @@ def editar_profesor(id):
 
 @app.route("/admin/horarios")
 def admin_horarios():
+    orden = request.args.get(
+        "orden",
+        "dia"
+    )
     horarios = Horario.query.all()
+    orden_dias = {
+        "Lunes": 1,
+        "Martes": 2,
+        "Miércoles": 3,
+        "Jueves": 4,
+        "Viernes": 5
+    }
+    if orden == "profesor":
+        horarios.sort(
+            key=lambda h: (
+                h.profesor.nombre,
+                orden_dias.get(h.dia, 99),
+                h.hora_inicio
+            )
+        )
+    else:
+        horarios.sort(
+            key=lambda h: (
+                orden_dias.get(h.dia, 99),
+                h.hora_inicio,
+                h.profesor.nombre
+            )
+        )
     return render_template(
         "admin/horarios.html",
-        horarios=horarios
+        horarios=horarios,
+        orden=orden
     )
 @app.route("/admin/horarios/nuevo", methods=["GET", "POST"])
 def nuevo_horario():
@@ -329,6 +358,20 @@ def nuevo_horario():
         dia = request.form["dia"]
         hora_inicio = request.form["hora_inicio"]
         hora_fin = request.form["hora_fin"]
+        if not horario_media_hora_valido(
+            hora_inicio
+        ):
+            flash(
+                "La hora de inicio debe ser en bloques de 30 minutos."
+            )
+            return redirect(request.url)
+        if not horario_media_hora_valido(
+            hora_fin
+        ):
+            flash(
+                "La hora de fin debe ser en bloques de 30 minutos."
+            )
+            return redirect(request.url)
         if not horario_valido(
             hora_inicio,
             hora_fin
@@ -385,6 +428,21 @@ def editar_horario(id):
         hora_inicio = request.form["hora_inicio"]
         hora_fin = request.form["hora_fin"]
         profesor_id = request.form["profesor_id"]
+        if not horario_media_hora_valido(
+            hora_inicio
+        ):
+            flash(
+                "La hora de inicio debe ser en bloques de 30 minutos."
+            )
+            return redirect(request.url)
+
+        if not horario_media_hora_valido(
+            hora_fin
+        ):
+            flash(
+                "La hora de fin debe ser en bloques de 30 minutos."
+            )
+            return redirect(request.url)
         if not horario_valido(
             hora_inicio,
             hora_fin
