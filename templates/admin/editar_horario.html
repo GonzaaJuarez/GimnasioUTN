@@ -80,10 +80,17 @@ Editar Horario
             {% endfor %}
         </select>
     </div>
-    <button
-        type="submit"
-        class="btn btn-primary">
-        Guardar Cambios
-    </button>
+    <div class="mt-3">
+        <button
+            type="submit"
+            class="btn btn-success">
+            Guardar Cambios
+        </button>
+        <a
+            href="/admin/horarios"
+            class="btn btn-secondary">
+            Volver
+        </a>
+    </div>
 </form>
 {% endblock %}

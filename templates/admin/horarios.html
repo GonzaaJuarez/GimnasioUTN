@@ -35,10 +35,10 @@ Gestión de Horarios
                 class="btn btn-warning btn-sm">
                     Editar
                 </a>
-
-                <a href="/admin/horarios/eliminar/{{ horario.id }}"
-                class="btn btn-danger btn-sm"
-                onclick="return confirm('¿Eliminar horario?')">
+                <a
+                    href="/admin/horarios/eliminar/{{ horario.id }}"
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Está seguro de que desea eliminar este horario?')">
                     Eliminar
                 </a>
             </td>

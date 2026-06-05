@@ -1,16 +1,41 @@
 import os
 import uuid
-from flask import Flask, render_template, request, redirect
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    flash
+)
 from models import db, Profesor, Horario
 from werkzeug.utils import secure_filename
+from validators import (
+    horario_superpuesto,
+    horario_valido,
+    nombre_valido,
+    telefono_valido,
+    email_valido
+)
 
 app = Flask(__name__)
+app.secret_key = "gimnasio-utn"
 
 app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///gimnasio.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
+
+@app.errorhandler(404)
+def pagina_no_encontrada(error):
+    return render_template(
+        "404.html"
+    ), 404
+@app.errorhandler(500)
+def error_interno(error):
+    return render_template(
+        "500.html"
+    ), 500
 
 @app.route("/")
 def inicio():
@@ -90,10 +115,22 @@ def horarios():
 
 @app.route("/profesores")
 def profesores():
-    lista_profesores = Profesor.query.all()
+    orden = request.args.get(
+        "orden",
+        "az"
+    )
+    if orden == "za":
+        lista_profesores = Profesor.query.order_by(
+            Profesor.nombre.desc()
+        ).all()
+    else:
+        lista_profesores = Profesor.query.order_by(
+            Profesor.nombre.asc()
+        ).all()
     return render_template(
         "profesores.html",
-        profesores=lista_profesores
+        profesores=lista_profesores,
+        orden=orden
     )
 
 @app.route("/profesores/<int:id>")
@@ -118,10 +155,22 @@ def admin():
     return render_template("admin.html")
 @app.route("/admin/profesores")
 def admin_profesores():
-    profesores = Profesor.query.all()
+    orden = request.args.get(
+        "orden",
+        "az"
+    )
+    if orden == "za":
+        profesores = Profesor.query.order_by(
+            Profesor.nombre.desc()
+        ).all()
+    else:
+        profesores = Profesor.query.order_by(
+            Profesor.nombre.asc()
+        ).all()
     return render_template(
         "admin/profesores.html",
-        profesores=profesores
+        profesores=profesores,
+        orden=orden
     )
 @app.route("/admin/profesores/nuevo", methods=["GET", "POST"])
 def nuevo_profesor():
@@ -129,8 +178,21 @@ def nuevo_profesor():
         nombre = request.form["nombre"]
         telefono = request.form["telefono"]
         email = request.form["email"]
-        instagram = request.form["instagram"]
+        instagram = request.form["instagram"].strip().replace("@", "")
         descripcion = request.form["descripcion"]
+        
+        if not nombre_valido(nombre):
+            flash("Nombre inválido.")
+            return redirect(request.url)
+
+        if not telefono_valido(telefono):
+            flash("Teléfono inválido.")
+            return redirect(request.url)
+
+        if not email_valido(email):
+            flash("Email inválido.")
+            return redirect(request.url)
+        
         archivo = request.files["foto"]
         nombre_archivo = None
         if archivo and archivo.filename:
@@ -156,6 +218,10 @@ def nuevo_profesor():
         )
         db.session.add(profesor)
         db.session.commit()
+        flash(
+            "Profesor creado correctamente.",
+            "success"
+        )
         return redirect("/admin/profesores")
     return render_template("admin/nuevo_profesor.html")
 @app.route("/admin/profesores/eliminar/<int:id>")
@@ -170,16 +236,38 @@ def eliminar_profesor(id):
             os.remove(ruta_foto)
     db.session.delete(profesor)
     db.session.commit()
+    flash(
+        "Profesor eliminado correctamente.",
+        "warning"
+    )
     return redirect("/admin/profesores")
 @app.route("/admin/profesores/editar/<int:id>", methods=["GET", "POST"])
 def editar_profesor(id):
     profesor = Profesor.query.get_or_404(id)
     if request.method == "POST":
-        profesor.nombre = request.form["nombre"]
-        profesor.telefono = request.form["telefono"]
-        profesor.email = request.form["email"]
-        profesor.instagram = request.form["instagram"]
-        profesor.descripcion = request.form["descripcion"]
+        nombre = request.form["nombre"]
+        telefono = request.form["telefono"]
+        email = request.form["email"]
+        instagram = request.form["instagram"].strip().replace("@", "")
+        descripcion = request.form["descripcion"]
+
+        if not nombre_valido(nombre):
+            flash("Nombre inválido.")
+            return redirect(request.url)
+
+        if not telefono_valido(telefono):
+            flash("Teléfono inválido.")
+            return redirect(request.url)
+
+        if not email_valido(email):
+            flash("Email inválido.")
+            return redirect(request.url)
+
+        profesor.nombre = nombre
+        profesor.telefono = telefono
+        profesor.email = email
+        profesor.instagram = instagram
+        profesor.descripcion = descripcion
 
         eliminar_foto = request.form.get("eliminar_foto")
         if eliminar_foto and profesor.foto:
@@ -217,6 +305,10 @@ def editar_profesor(id):
             )
             profesor.foto = nombre_archivo
         db.session.commit()
+        flash(
+            "Profesor actualizado correctamente.",
+            "success"
+        )
         return redirect("/admin/profesores")
     return render_template(
         "admin/editar_profesor.html",
@@ -234,6 +326,26 @@ def admin_horarios():
 def nuevo_horario():
     profesores = Profesor.query.all()
     if request.method == "POST":
+        dia = request.form["dia"]
+        hora_inicio = request.form["hora_inicio"]
+        hora_fin = request.form["hora_fin"]
+        if not horario_valido(
+            hora_inicio,
+            hora_fin
+        ):
+            flash(
+                "La hora de inicio debe ser menor que la hora de fin."
+            )
+            return redirect(request.url)
+        if horario_superpuesto(
+            dia,
+            hora_inicio,
+            hora_fin
+        ):
+            flash(
+                "Ya existe un horario superpuesto."
+            )
+            return redirect(request.url)
         horario = Horario(
             dia=request.form["dia"],
             hora_inicio=request.form["hora_inicio"],
@@ -242,6 +354,10 @@ def nuevo_horario():
         )
         db.session.add(horario)
         db.session.commit()
+        flash(
+            "Horario creado correctamente.",
+            "success"
+        )
         return redirect("/admin/horarios")
     return render_template(
         "admin/nuevo_horario.html",
@@ -252,6 +368,10 @@ def eliminar_horario(id):
     horario = Horario.query.get_or_404(id)
     db.session.delete(horario)
     db.session.commit()
+    flash(
+        "Horario actualizado correctamente.",
+        "success"
+    )
     return redirect("/admin/horarios")
 @app.route(
     "/admin/horarios/editar/<int:id>",
@@ -261,20 +381,43 @@ def editar_horario(id):
     horario = Horario.query.get_or_404(id)
     profesores = Profesor.query.all()
     if request.method == "POST":
-        horario.dia = request.form["dia"]
-        horario.hora_inicio = request.form["hora_inicio"]
-        horario.hora_fin = request.form["hora_fin"]
-        horario.profesor_id = request.form["profesor_id"]
+        dia = request.form["dia"]
+        hora_inicio = request.form["hora_inicio"]
+        hora_fin = request.form["hora_fin"]
+        profesor_id = request.form["profesor_id"]
+        if not horario_valido(
+            hora_inicio,
+            hora_fin
+        ):
+                flash(
+                    "La hora de inicio debe ser menor que la hora de fin."
+                )
+                return redirect(request.url)
+        if horario_superpuesto(
+            horario.dia,
+            horario.hora_inicio,
+            horario.hora_fin,
+            horario.id
+        ):
+            flash(
+                "Ya existe un horario superpuesto."
+            )
+            return redirect(request.url)
+        horario.dia = dia
+        horario.hora_inicio = hora_inicio
+        horario.hora_fin = hora_fin
+        horario.profesor_id = profesor_id
         db.session.commit()
+        flash(
+            "Horario actualizado correctamente.",
+            "success"
+        )
         return redirect("/admin/horarios")
     return render_template(
         "admin/editar_horario.html",
         horario=horario,
         profesores=profesores
     )
-
-
-
 
 
 

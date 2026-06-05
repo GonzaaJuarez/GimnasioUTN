@@ -12,6 +12,36 @@ Administrar Profesores
    class="btn btn-success mb-3">
     Nuevo Profesor
 </a>
+<form method="GET" class="mb-3">
+    <label class="form-label">
+        Ordenar por:
+    </label>
+    <select
+        name="orden"
+        class="form-select w-auto"
+        onchange="this.form.submit()">
+        <option
+            value="az"
+            {% if orden == "az" %}selected{% endif %}>
+            Nombre A-Z
+        </option>
+        <option
+            value="za"
+            {% if orden == "za" %}selected{% endif %}>
+            Nombre Z-A
+        </option>
+        <option
+            value="nuevos"
+            {% if orden == "nuevos" %}selected{% endif %}>
+            Más recientes
+        </option>
+        <option
+            value="viejos"
+            {% if orden == "viejos" %}selected{% endif %}>
+            Más antiguos
+        </option>
+    </select>
+</form>
 
 <div class="list-group">
     {% for profesor in profesores %}
@@ -22,9 +52,10 @@ Administrar Profesores
                 class="btn btn-warning btn-sm">
                     Editar
                 </a>
-
-                <a href="/admin/profesores/eliminar/{{ profesor.id }}"
-                class="btn btn-danger btn-sm">
+                <a
+                    href="/admin/profesores/eliminar/{{ profesor.id }}"
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Está seguro de que desea eliminar a {{ profesor.nombre }}?')">
                     Eliminar
                 </a>
             </div>

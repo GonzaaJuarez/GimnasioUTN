@@ -7,6 +7,31 @@ Profesores
 {% block content %}
 
 <h1>Profesores</h1>
+<div class="mb-3">
+    <span class="me-2">
+        Ordenar:
+    </span>
+    <a
+        href="/profesores?orden=az"
+        class="btn btn-sm
+        {% if orden == 'az' %}
+            btn-primary
+        {% else %}
+            btn-outline-primary
+        {% endif %}">
+        A-Z
+    </a>
+    <a
+        href="/profesores?orden=za"
+        class="btn btn-sm
+        {% if orden == 'za' %}
+            btn-primary
+        {% else %}
+            btn-outline-primary
+        {% endif %}">
+        Z-A
+    </a>
+</div>
 <div class="list-group">
     {% for profesor in profesores %}
 

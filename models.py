@@ -1,9 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
 class Profesor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    fecha_creacion = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
     nombre = db.Column(db.String(100), nullable=False)
     telefono = db.Column(db.String(20))
     email = db.Column(db.String(120))
